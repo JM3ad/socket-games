@@ -13,6 +13,7 @@ Later:
 * Forums/rooms/lobbies
 * Security - only right player can play
 * Reconnection behaviour
+* https://pythonhosted.org/Flask-Scss/
 
 Design:
 * Simple static HTML templates, working with basic JS scripts

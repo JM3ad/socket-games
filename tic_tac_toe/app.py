@@ -4,7 +4,6 @@ import json
 app = Quart(__name__)
 
 # Improve the way I'm storing the gamestate
-GAMESTATE = ["."] * 9
 CELL_IDS = {
     "top-left": 0,
     "top-centre": 1,
@@ -16,20 +15,31 @@ CELL_IDS = {
     "bottom-centre": 7,
     "bottom-right": 8
 }
+GAMES = {}
 
 @app.route('/')
-async def hello():
-    return await render_template('index.html', state = GAMESTATE)
+async def index():
+    return await render_template('index.html')
+
+@app.route('/game/<game_id>')
+async def game(game_id): 
+    if game_id not in GAMES:
+        GAMES[game_id] = ["."] * 9
+    return await render_template('game.html', game_id = game_id, game_state = GAMES[game_id])
 
 @app.websocket('/ws')
 async def ws():
-    global GAMESTATE
     while True:
         data = await websocket.receive()
-        if (data in CELL_IDS):
-            GAMESTATE[CELL_IDS[data]] = 'X'
-        elif data == 'reset':
-            GAMESTATE = ['.'] * 9
+        parsed = json.loads(data)
+        game_id = parsed['game_id']
+        message_type = parsed['message_type']
+        if message_type == 'move':
+            move = parsed['move']
+            if (move in CELL_IDS):
+                GAMES[game_id][CELL_IDS[move]] = 'X'
+        elif message_type == 'reset':
+            GAMES[game_id] = ['.'] * 9
         await websocket.send(json.dumps({
-            "state": GAMESTATE 
+            "state": GAMES[game_id] 
         }))
