@@ -1,0 +1,10 @@
+.game-border {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 300px;
+}
+
+.game-cell {
+    border: 1px;
+    flex-basis: 33.33%;
+}
