@@ -4,6 +4,8 @@ jobs:
   Lint-And-Test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
       - name: Build test image
         run: docker build --target test --tag tictactoe:test .
       - name: Run tests
