@@ -22,6 +22,7 @@ GAMES = {}
 async def index():
     return await render_template("index.html")
 
+
 @app.route("/game/<game_id>")
 async def game(game_id):
     if game_id not in GAMES:

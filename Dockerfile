@@ -22,4 +22,4 @@ CMD ["--host", "0.0.0.0"]
 FROM dev as test
 ENTRYPOINT [ "poetry", "run", "pytest" ]
 FROM dev as lint
-ENTRYPOINT [ "poetry", "run", "black", "--check", "tic_tac_toe" ]
+ENTRYPOINT [ "poetry", "run", "black", "--check", "." ]
