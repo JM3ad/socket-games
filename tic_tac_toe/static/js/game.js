@@ -1,5 +1,5 @@
 const ws = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws');
-const gameId = window.location.pathname.split("/").pop()
+const gameId = window.location.pathname.split("/").pop();
 const cellIds = [
     "top-left",
     "top-centre",
@@ -30,10 +30,12 @@ function registerClicks() {
         const element = document.getElementById(id);
         element.onclick = function(event) {
             console.log(event);
+            const player = document.getElementById('player').innerHTML;
             const toSend = {
                 'message_type': 'move',
                 'game_id': gameId,
-                'move': id
+                'move': id,
+                'player': player,
             }
             ws.send(JSON.stringify(toSend));
         }

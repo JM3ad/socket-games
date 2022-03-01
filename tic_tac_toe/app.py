@@ -25,10 +25,12 @@ async def index():
 
 @app.route("/game/<game_id>")
 async def game(game_id):
+    player = 'O'
     if game_id not in GAMES:
         GAMES[game_id] = ["."] * 9
+        player = 'X'
     return await render_template(
-        "game.html", game_id=game_id, game_state=GAMES[game_id]
+        "game.html", game_id=game_id, game_state=GAMES[game_id], player=player
     )
 
 
@@ -41,8 +43,17 @@ async def ws():
         message_type = parsed["message_type"]
         if message_type == "move":
             move = parsed["move"]
-            if move in CELL_IDS:
-                GAMES[game_id][CELL_IDS[move]] = "X"
+            player = parsed["player"]
+            current_player_turn = get_player_turn(GAMES[game_id])
+            if move in CELL_IDS and player == current_player_turn:
+                GAMES[game_id][CELL_IDS[move]] = player
         elif message_type == "reset":
             GAMES[game_id] = ["."] * 9
         await websocket.send(json.dumps({"state": GAMES[game_id]}))
+
+def get_player_turn(game):
+    turns_played = len([square for square in game if square != "."])
+    if turns_played % 2 == 0:
+        return 'X'
+    else:
+        return 'O'

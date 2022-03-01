@@ -5,7 +5,9 @@
 <body>
     <p>
         Game Link to share: TODO
+        You are player {{ player }}
     </p>
+    <div hidden id="player">{{player}}</div>
     <div class="game-border">
         <div class="game-cell" id="top-left">{{ game_state[0] }}</div>
         <div class="game-cell" id="top-centre">{{ game_state[1] }}</div>
