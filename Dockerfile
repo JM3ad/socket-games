@@ -19,10 +19,7 @@ ENV QUART_APP=tic_tac_toe/app:app
 ENTRYPOINT ["poetry", "run", "quart", "run"]
 CMD ["--host", "0.0.0.0"]
 
-FROM base as prod
-RUN poetry install --no-dev
-
-COPY . .
-
-ENTRYPOINT ["poetry", "run", "hypercorn", "tic_tac_toe/app:app"]
-CMD ["--bind", "0.0.0.0:5000"]
+FROM dev as test
+ENTRYPOINT [ "poetry", "run", "pytest" ]
+FROM dev as lint
+ENTRYPOINT [ "poetry", "run", "black", "--check", "tic_tac_toe" ]

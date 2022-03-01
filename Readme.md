@@ -11,3 +11,4 @@ The production build:
 * `docker run -itp prod-image`
 
 Tests: `poetry run pytest`
+Format: `poetry run black`

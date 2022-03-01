@@ -1,0 +1,14 @@
+name: CI Pipeline
+on: [push, pull_request]
+jobs:
+  Lint-And-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build test image
+        run: docker build --target test --tag tictactoe:test .
+      - name: Run tests
+        run: docker run tictactoe:test
+      - name: Build lint image
+        run: docker build --target lint --tag tictactoe:lint .
+      - name: Lint
+        run: docker run tictactoe:lint
