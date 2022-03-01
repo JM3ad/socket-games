@@ -1,12 +1,13 @@
 FROM python:3.9 as base
 
-RUN useradd -m python
+WORKDIR /app
+
+RUN useradd -m python && chown python /app
 USER python
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-ENV PATH=${PATH}:/home/python/.poetry/bin
+RUN curl -sSL https://install.python-poetry.org | python -
+ENV PATH=${PATH}:/home/python/.local/bin
 
-WORKDIR /app
 
 COPY *.toml ./
 
