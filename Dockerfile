@@ -8,7 +8,7 @@ ENV PATH=${PATH}:/home/python/.poetry/bin
 
 WORKDIR /app
 
-COPY *.toml .
+COPY *.toml ./
 
 FROM base as dev
 RUN poetry install

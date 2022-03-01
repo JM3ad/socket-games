@@ -12,3 +12,7 @@ The production build:
 
 Tests: `poetry run pytest`
 Format: `poetry run black`
+
+## Intentions
+
+See the project's [Trello Board](https://trello.com/b/ue8k0MhL/socket-games)
