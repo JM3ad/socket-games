@@ -1,15 +1,29 @@
+from functools import wraps
 import pytest
 import json
+import os
+from async_timeout import timeout
 
-from tic_tac_toe.app import app
+from tic_tac_toe.app import create_app
+
+
+def with_timeout(corofunc):
+    @wraps(corofunc)
+    async def wrapper(*args, **kwargs):
+        with timeout(1):
+            return await corofunc(*args, **kwargs)
+
+    return wrapper
 
 
 @pytest.fixture
 def test_app():
-    return app
+    os.environ["SECRET_KEY"] = "secret"
+    return create_app()
 
 
 @pytest.mark.asyncio
+@with_timeout
 async def test_websocket(test_app):
     test_client = test_app.test_client()
     game_id = "abcdef"
@@ -24,4 +38,4 @@ async def test_websocket(test_app):
 
     json_result = json.loads(result)
     state = json_result["game_board"]
-    assert "X" in state
+    assert len(state) == 9

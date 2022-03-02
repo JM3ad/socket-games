@@ -26,6 +26,14 @@ ws.onmessage = function (event) {
         const result = document.getElementById('result');
         result.innerHTML = data.result;
     }
+    if (data.players) {
+        const my_player_id = document.getElementById('player_id').innerHTML;
+        const role = data.players[my_player_id];
+        if (role) {
+            const role_element = document.getElementById('player_role');
+            role_element.innerHTML = role;
+        }
+    }
 };
 
 function registerClicks() {
@@ -34,12 +42,10 @@ function registerClicks() {
         const element = document.getElementById(id);
         element.onclick = function(event) {
             console.log(event);
-            const player = document.getElementById('player').innerHTML;
             const toSend = {
                 'message_type': 'move',
                 'game_id': gameId,
                 'move': id,
-                'player': player,
             }
             ws.send(JSON.stringify(toSend));
         }
@@ -49,6 +55,15 @@ function registerClicks() {
     resetButton.onclick = function(event) {
         const toSend = {
             'message_type': 'reset',
+            'game_id': gameId,
+        }
+        ws.send(JSON.stringify(toSend));
+    }
+
+    const startButton = document.getElementById("start");
+    startButton.onclick = function(event) {
+        const toSend = {
+            'message_type': 'start',
             'game_id': gameId,
         }
         ws.send(JSON.stringify(toSend));
