@@ -50,7 +50,9 @@ async def ws(queue, game_id):
             player = parsed["player"]
             current_player_turn = get_player_turn(GAMES[game_id])
             if move in CELL_IDS and player == current_player_turn:
-                GAMES[game_id][CELL_IDS[move]] = player
+                move_index = CELL_IDS[move]
+                if GAMES[game_id][move_index] == ".":
+                    GAMES[game_id][move_index] = player
         elif message_type == "reset":
             GAMES[game_id] = ["."] * 9
         await broadcast(game_id, json.dumps({"state": GAMES[game_id]}))
