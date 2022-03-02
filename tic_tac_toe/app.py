@@ -1,4 +1,5 @@
 import asyncio
+from time import gmtime
 from quart import Quart, render_template, websocket
 import json
 
@@ -51,7 +52,7 @@ async def ws(queue, game_id):
             current_player_turn = get_player_turn(GAMES[game_id])
             if move in CELL_IDS and player == current_player_turn:
                 move_index = CELL_IDS[move]
-                if GAMES[game_id][move_index] == ".":
+                if GAMES[game_id][move_index] == "." and is_game_unfinished(GAMES[game_id]):
                     GAMES[game_id][move_index] = player
         elif message_type == "reset":
             GAMES[game_id] = ["."] * 9
@@ -64,3 +65,22 @@ def get_player_turn(game):
         return "X"
     else:
         return "O"
+
+def is_game_unfinished(game):
+    if (
+        do_squares_match(game, 0, 1, 2) or
+        do_squares_match(game, 3, 4, 5) or
+        do_squares_match(game, 6, 7, 8) or
+        do_squares_match(game, 0, 3, 6) or
+        do_squares_match(game, 1, 4, 7) or
+        do_squares_match(game, 2, 5, 8) or
+        do_squares_match(game, 0, 4, 8) or
+        do_squares_match(game, 6, 4, 2)
+    ):
+        print("Game over")
+        return False
+    
+    return True
+
+def do_squares_match(game, idx_1, idx_2, idx_3):
+    return game[idx_1] != "." and game[idx_1] == game[idx_2] and game[idx_2] == game[idx_3]
