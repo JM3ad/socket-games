@@ -31,7 +31,7 @@ ws.onmessage = function (event) {
         const role = data.players[my_player_id];
         if (role) {
             const role_element = document.getElementById('player_role');
-            role_element.innerHTML = role;
+            role_element.innerHTML = `You are player ${role}`;
         }
     }
 };
@@ -67,6 +67,11 @@ function registerClicks() {
             'game_id': gameId,
         }
         ws.send(JSON.stringify(toSend));
+    }
+
+    const copyButton = document.getElementById('copy-button');
+    copyButton.onclick = function(event) {
+        navigator.clipboard.writeText(window.location);
     }
 }
 
