@@ -79,6 +79,9 @@ def is_game_unfinished(game):
     ):
         print("Game over")
         return False
+
+    if len([square for square in game if square != "."]) == 9:
+        return True
     
     return True
 
