@@ -10,4 +10,4 @@ services:
     volumes:
       - .:/app
       - /app/.venv
-    restart: on-failure:5
+    restart: on-failure

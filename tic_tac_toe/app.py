@@ -52,11 +52,18 @@ async def ws(queue, game_id):
             current_player_turn = get_player_turn(GAMES[game_id])
             if move in CELL_IDS and player == current_player_turn:
                 move_index = CELL_IDS[move]
-                if GAMES[game_id][move_index] == "." and is_game_unfinished(GAMES[game_id]):
+                if GAMES[game_id][move_index] == "." and is_game_unfinished(
+                    GAMES[game_id]
+                ):
                     GAMES[game_id][move_index] = player
         elif message_type == "reset":
             GAMES[game_id] = ["."] * 9
-        await broadcast(game_id, json.dumps({"state": GAMES[game_id]}))
+        await broadcast(
+            game_id,
+            json.dumps(
+                {"game_board": GAMES[game_id], "result": get_result(GAMES[game_id])}
+            ),
+        )
 
 
 def get_player_turn(game):
@@ -66,24 +73,49 @@ def get_player_turn(game):
     else:
         return "O"
 
+
+def get_result(game):
+    possible_winning_combos = [
+        (0, 1, 2),
+        (3, 4, 5),
+        (6, 7, 8),
+        (0, 3, 6),
+        (1, 4, 7),
+        (2, 5, 8),
+        (0, 4, 8),
+        (6, 4, 2),
+    ]
+    for combo in possible_winning_combos:
+        if do_squares_match(game, combo[0], combo[1], combo[2]):
+            winner = game[combo[0]]
+            return f"Player {winner} wins"
+
+    if len([square for square in game if square != "."]) == 9:
+        return "Draw"
+    return "Unfinished"
+
+
 def is_game_unfinished(game):
     if (
-        do_squares_match(game, 0, 1, 2) or
-        do_squares_match(game, 3, 4, 5) or
-        do_squares_match(game, 6, 7, 8) or
-        do_squares_match(game, 0, 3, 6) or
-        do_squares_match(game, 1, 4, 7) or
-        do_squares_match(game, 2, 5, 8) or
-        do_squares_match(game, 0, 4, 8) or
-        do_squares_match(game, 6, 4, 2)
+        do_squares_match(game, 0, 1, 2)
+        or do_squares_match(game, 3, 4, 5)
+        or do_squares_match(game, 6, 7, 8)
+        or do_squares_match(game, 0, 3, 6)
+        or do_squares_match(game, 1, 4, 7)
+        or do_squares_match(game, 2, 5, 8)
+        or do_squares_match(game, 0, 4, 8)
+        or do_squares_match(game, 6, 4, 2)
     ):
         print("Game over")
         return False
 
     if len([square for square in game if square != "."]) == 9:
         return True
-    
+
     return True
 
+
 def do_squares_match(game, idx_1, idx_2, idx_3):
-    return game[idx_1] != "." and game[idx_1] == game[idx_2] and game[idx_2] == game[idx_3]
+    return (
+        game[idx_1] != "." and game[idx_1] == game[idx_2] and game[idx_2] == game[idx_3]
+    )

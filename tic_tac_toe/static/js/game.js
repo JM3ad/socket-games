@@ -15,12 +15,16 @@ const cellIds = [
 ws.onmessage = function (event) {
     console.log(event.data);
     const data = JSON.parse(event.data);
-    if (data.state) {
+    if (data.game_board) {
         for (i = 0; i < cellIds.length; i++) {
             const id = cellIds[i];
             const element = document.getElementById(id);
-            element.innerHTML = data.state[i];
+            element.innerHTML = data.game_board[i];
         }
+    }
+    if (data.result !== "Unfinished") {
+        const result = document.getElementById('result');
+        result.innerHTML = data.result;
     }
 };
 

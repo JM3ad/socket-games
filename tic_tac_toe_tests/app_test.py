@@ -23,5 +23,5 @@ async def test_websocket(test_app):
         result = await test_websocket.receive()
 
     json_result = json.loads(result)
-    state = json_result["state"]
+    state = json_result["game_board"]
     assert "X" in state
