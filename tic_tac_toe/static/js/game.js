@@ -1,5 +1,5 @@
-const ws = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws');
-const gameId = window.location.pathname.split("/").pop()
+const gameId = window.location.pathname.split("/").pop();
+const ws = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/' + gameId);
 const cellIds = [
     "top-left",
     "top-centre",
@@ -15,11 +15,23 @@ const cellIds = [
 ws.onmessage = function (event) {
     console.log(event.data);
     const data = JSON.parse(event.data);
-    if (data.state) {
+    if (data.game_board) {
         for (i = 0; i < cellIds.length; i++) {
             const id = cellIds[i];
             const element = document.getElementById(id);
-            element.innerHTML = data.state[i];
+            element.innerHTML = data.game_board[i];
+        }
+    }
+    if (data.result !== "Unfinished") {
+        const result = document.getElementById('result');
+        result.innerHTML = data.result;
+    }
+    if (data.players) {
+        const my_player_id = document.getElementById('player_id').innerHTML;
+        const role = data.players[my_player_id];
+        if (role) {
+            const role_element = document.getElementById('player_role');
+            role_element.innerHTML = role;
         }
     }
 };
@@ -33,7 +45,7 @@ function registerClicks() {
             const toSend = {
                 'message_type': 'move',
                 'game_id': gameId,
-                'move': id
+                'move': id,
             }
             ws.send(JSON.stringify(toSend));
         }
@@ -43,6 +55,15 @@ function registerClicks() {
     resetButton.onclick = function(event) {
         const toSend = {
             'message_type': 'reset',
+            'game_id': gameId,
+        }
+        ws.send(JSON.stringify(toSend));
+    }
+
+    const startButton = document.getElementById("start");
+    startButton.onclick = function(event) {
+        const toSend = {
+            'message_type': 'start',
             'game_id': gameId,
         }
         ws.send(JSON.stringify(toSend));

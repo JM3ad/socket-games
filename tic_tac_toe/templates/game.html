@@ -5,7 +5,9 @@
 <body>
     <p>
         Game Link to share: TODO
+        You are player <span id="player_role"></span>
     </p>
+    <div hidden id="player_id">{{player_id}}</div>
     <div class="game-border">
         <div class="game-cell" id="top-left">{{ game_state[0] }}</div>
         <div class="game-cell" id="top-centre">{{ game_state[1] }}</div>
@@ -17,6 +19,9 @@
         <div class="game-cell" id="bottom-centre">{{ game_state[7] }}</div>
         <div class="game-cell" id="bottom-right">{{ game_state[8] }}</div>
     </div>
+    <div id="result"></div>
+    <!-- TODO Make these buttons only appear if relevant -->
     <button id="reset">Reset</button>
+    <button id="start">Start</button>
     <script src="/static/js/game.js"></script>
 </body>

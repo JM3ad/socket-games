@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "tic-tac-toe"
+name = "tic_tac_toe"
 version = "0.1.0"
 description = "Simple tic-tac-toe game built with web sockets"
 authors = ["Jack Mead <jack-mead@hotmail.co.uk>"]
@@ -14,6 +14,7 @@ python-dotenv = "^0.19.2"
 pytest = "^7.0.1"
 pytest-asyncio = "^0.18.1"
 black = "^22.1.0"
+async-timeout = "^4.0.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
