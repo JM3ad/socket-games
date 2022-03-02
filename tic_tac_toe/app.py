@@ -1,9 +1,12 @@
+import asyncio
 from quart import Quart, render_template, websocket
 import json
 
+from socket_helper import broadcast, collect_websocket, send_queue_messages
+
 app = Quart(__name__)
 
-# Improve the way I'm storing the gamestate
+# TODO: Improve the way I'm storing the gamestate
 CELL_IDS = {
     "top-left": 0,
     "top-centre": 1,
@@ -25,21 +28,22 @@ async def index():
 
 @app.route("/game/<game_id>")
 async def game(game_id):
-    player = 'O'
+    player = "O"
     if game_id not in GAMES:
         GAMES[game_id] = ["."] * 9
-        player = 'X'
+        player = "X"
     return await render_template(
         "game.html", game_id=game_id, game_state=GAMES[game_id], player=player
     )
 
 
-@app.websocket("/ws")
-async def ws():
+@app.websocket("/ws/<game_id>")
+@collect_websocket
+async def ws(queue, game_id):
     while True:
+        asyncio.create_task(send_queue_messages(websocket, queue))
         data = await websocket.receive()
         parsed = json.loads(data)
-        game_id = parsed["game_id"]
         message_type = parsed["message_type"]
         if message_type == "move":
             move = parsed["move"]
@@ -49,11 +53,12 @@ async def ws():
                 GAMES[game_id][CELL_IDS[move]] = player
         elif message_type == "reset":
             GAMES[game_id] = ["."] * 9
-        await websocket.send(json.dumps({"state": GAMES[game_id]}))
+        await broadcast(game_id, json.dumps({"state": GAMES[game_id]}))
+
 
 def get_player_turn(game):
     turns_played = len([square for square in game if square != "."])
     if turns_played % 2 == 0:
-        return 'X'
+        return "X"
     else:
-        return 'O'
+        return "O"

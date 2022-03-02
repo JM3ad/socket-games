@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "tic-tac-toe"
+name = "tic_tac_toe"
 version = "0.1.0"
 description = "Simple tic-tac-toe game built with web sockets"
 authors = ["Jack Mead <jack-mead@hotmail.co.uk>"]
