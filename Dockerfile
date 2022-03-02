@@ -16,6 +16,7 @@ RUN poetry install
 
 COPY . .
 
+ENV PYTHONPATH=/app
 ENV QUART_APP=tic_tac_toe/app:app
 ENTRYPOINT ["poetry", "run", "quart", "run"]
 CMD ["--host", "0.0.0.0"]

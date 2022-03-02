@@ -2,7 +2,7 @@ import asyncio
 from quart import Quart, render_template, websocket
 import json
 
-from socket_helper import broadcast, collect_websocket, send_queue_messages
+from tic_tac_toe.socket_helper import broadcast, collect_websocket, send_queue_messages
 
 app = Quart(__name__)
 

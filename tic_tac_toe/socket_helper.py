@@ -1,9 +1,6 @@
 import asyncio
 from functools import wraps
 
-from quart import g
-
-
 connected_websockets = {}
 
 

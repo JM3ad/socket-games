@@ -13,10 +13,12 @@ def test_app():
 async def test_websocket(test_app):
     test_client = test_app.test_client()
     game_id = "abcdef"
-    data = json.dumps({"message_type": "move", "game_id": game_id, "move": "top-right"})
+    data = json.dumps(
+        {"message_type": "move", "game_id": game_id, "move": "top-right", "player": "X"}
+    )
     await test_client.get(f"/game/{game_id}")
 
-    async with test_client.websocket("/ws") as test_websocket:
+    async with test_client.websocket(f"/ws/{game_id}") as test_websocket:
         await test_websocket.send(data)
         result = await test_websocket.receive()
 
