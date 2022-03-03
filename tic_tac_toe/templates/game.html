@@ -3,10 +3,10 @@
     <link rel="stylesheet" href="/static/css/main.css"></link>
 </head>
 <body>
-    <p>
-        Game Link to share: TODO
-        You are player <span id="player_role"></span>
-    </p>
+    <div class="info">
+        <button id="copy-button">Click to copy game link</button>
+        <div id="player_role"></div>
+    </div>
     <div hidden id="player_id">{{player_id}}</div>
     <div class="game-border">
         <div class="game-cell" id="top-left">{{ game_state[0] }}</div>
@@ -20,8 +20,10 @@
         <div class="game-cell" id="bottom-right">{{ game_state[8] }}</div>
     </div>
     <div id="result"></div>
-    <!-- TODO Make these buttons only appear if relevant -->
-    <button id="reset">Reset</button>
-    <button id="start">Start</button>
+    <div class="button-container">
+        <!-- TODO Make these buttons only appear if relevant -->
+        <button id="reset">Reset</button>
+        <button id="start">Start</button>
+    </div>
     <script src="/static/js/game.js"></script>
 </body>
