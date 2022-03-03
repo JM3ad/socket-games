@@ -1,5 +1,6 @@
 const gameId = window.location.pathname.split("/").pop();
-const ws = new WebSocket('ws://' + document.domain + ':' + location.port + '/ws/' + gameId);
+const protocol = location.hostname === "localhost" ? "ws" : "wss";
+const ws = new WebSocket(protocol + '://' + document.domain + ':' + location.port + '/ws/' + gameId);
 const cellIds = [
     "top-left",
     "top-centre",

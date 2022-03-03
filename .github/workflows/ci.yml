@@ -14,3 +14,22 @@ jobs:
         run: docker build --target lint --tag tictactoe:lint .
       - name: Lint
         run: docker run tictactoe:lint
+  Deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: Lint-And-Test
+    env:
+      HEROKU_API_KEY: "${{ secrets.HEROKU_API_KEY }}"
+      # Skip unnecessary Docker build stages
+      DOCKER_BUILDKIT: "1"
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+      - name: Build the production image
+        run: docker build --target prod --tag registry.heroku.com/socket-games/web .
+      - name: Login to Heroku Registry
+        run: heroku container:login
+      - name: Push new image
+        run: docker push registry.heroku.com/socket-games/web
+      - name: Login to Heroku
+        run: heroku container:release web -a socket-games

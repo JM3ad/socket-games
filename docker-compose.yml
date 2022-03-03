@@ -11,3 +11,5 @@ services:
       - .:/app
       - /app/.venv
     restart: on-failure
+    env_file:
+      - .env
