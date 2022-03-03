@@ -1,6 +1,6 @@
-# Tic-Tac-Toe
+# Socket Games
 
-Inspiration taken from Jonesey13.
+A collection (eventually) of socket-based games to explore working with web sockets. The latest deployment is available at <https://socket-games.herokuapp.com/>.
 
 ## Running the project
 First time: `poetry install`

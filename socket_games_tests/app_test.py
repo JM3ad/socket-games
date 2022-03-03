@@ -4,7 +4,7 @@ import json
 import os
 from async_timeout import timeout
 
-from tic_tac_toe.app import create_app
+from socket_games.app import create_app
 
 
 def with_timeout(corofunc):

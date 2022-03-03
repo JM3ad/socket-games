@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "tic_tac_toe"
+name = "socket_games"
 version = "0.1.0"
-description = "Simple tic-tac-toe game built with web sockets"
+description = "Simple socket-based games"
 authors = ["Jack Mead <jack-mead@hotmail.co.uk>"]
 license = "MIT"
 

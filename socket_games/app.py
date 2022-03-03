@@ -6,8 +6,9 @@ from quart import Quart, g, render_template, websocket, session
 import json
 import uuid
 
-from tic_tac_toe.socket_helper import broadcast, collect_websocket, send_queue_messages
-from tic_tac_toe.game_state import TicTacToeState
+from socket_games.socket_helper import broadcast, collect_websocket, send_queue_messages
+from socket_games.tic_tac_toe.ttt_game_state import TicTacToeState
+from socket_games.tic_tac_toe.ttt_encoder import TicTacToeEncoder
 
 
 def create_app():
@@ -15,17 +16,6 @@ def create_app():
     app.secret_key = os.getenv("SECRET_KEY")
 
     # TODO: Improve the way I'm storing the gamestate
-    CELL_IDS = {
-        "top-left": 0,
-        "top-centre": 1,
-        "top-right": 2,
-        "middle-left": 3,
-        "middle-centre": 4,
-        "middle-right": 5,
-        "bottom-left": 6,
-        "bottom-centre": 7,
-        "bottom-right": 8,
-    }
     GAMES = {}
 
     def generate_id():
@@ -67,16 +57,14 @@ def create_app():
             return
         game = GAMES[game_id]
         game.add_player(session["id"])
+        asyncio.create_task(send_queue_messages(websocket, queue))
         while True:
-            asyncio.create_task(send_queue_messages(websocket, queue))
             data = await websocket.receive()
             parsed = json.loads(data)
             message_type = parsed["message_type"]
             if message_type == "move":
                 move = parsed["move"]
-                if move in CELL_IDS:
-                    move_index = CELL_IDS[move]
-                    game.play_move(move_index, session["id"])
+                game.play_move(move, session["id"])
             elif message_type == "reset":
                 game.reset()
             elif message_type == "start":
@@ -88,7 +76,8 @@ def create_app():
                         "game_board": game.board,
                         "result": game.get_result(),
                         "players": game.player_roles,
-                    }
+                    },
+                    cls=TicTacToeEncoder,
                 ),
             )
 

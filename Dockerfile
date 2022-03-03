@@ -27,7 +27,7 @@ ENTRYPOINT [ "poetry", "run", "black", "--check", "." ]
 
 FROM base as prod
 RUN poetry install --no-dev
-COPY tic_tac_toe ./tic_tac_toe
+COPY socket_games ./socket_games
 COPY scripts/entrypoint.sh entrypoint.sh
 ENV PORT=5000
 ENTRYPOINT ["bash", "entrypoint.sh"]
