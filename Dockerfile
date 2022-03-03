@@ -10,14 +10,13 @@ ENV PATH=${PATH}:/home/python/.local/bin
 
 
 COPY *.toml ./
+ENV PYTHONPATH=/app
 
 FROM base as dev
 RUN poetry install
 
 COPY . .
 
-ENV PYTHONPATH=/app
-ENV QUART_APP=tic_tac_toe/app:create_app()
 ENTRYPOINT ["poetry", "run", "quart", "run"]
 CMD ["--host", "0.0.0.0"]
 
@@ -25,3 +24,10 @@ FROM dev as test
 ENTRYPOINT [ "poetry", "run", "pytest" ]
 FROM dev as lint
 ENTRYPOINT [ "poetry", "run", "black", "--check", "." ]
+
+FROM base as prod
+RUN poetry install --no-dev
+COPY tic_tac_toe ./tic_tac_toe
+COPY scripts/entrypoint.sh entrypoint.sh
+ENV PORT=5000
+ENTRYPOINT ["bash", "entrypoint.sh"]
