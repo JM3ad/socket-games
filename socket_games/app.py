@@ -4,6 +4,7 @@ import os
 from quart import Quart, redirect, render_template, websocket, session, request
 import json
 import uuid
+from socket_games.mafia.mafia_game import MafiaGame
 
 from socket_games.socket_helper import broadcast, collect_websocket, send_queue_messages
 from socket_games.tic_tac_toe.ttt_game_state import TicTacToeState
@@ -45,13 +46,25 @@ def create_app():
 
     @app.route("/game/<game_id>")
     @ensure_id
-    async def game(game_id):
+    async def tic_tac_toe(game_id):
         if game_id not in GAMES:
             GAMES[game_id] = TicTacToeState()
         return await render_template(
             "tic_tac_toe.html",
             game_id=game_id,
             game_state=GAMES[game_id].board,
+            player_id=session["id"],
+        )
+
+    @app.route("/mafia/<game_id>")
+    @ensure_id
+    async def mafia(game_id):
+        if game_id not in GAMES:
+            GAMES[game_id] = MafiaGame()
+        return await render_template(
+            "mafia.html",
+            game_id=game_id,
+            game_state=GAMES[game_id],
             player_id=session["id"],
         )
 
