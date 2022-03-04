@@ -1,0 +1,43 @@
+.game-border {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 500px;
+    margin: auto;
+}
+
+.game-cell {
+    border: black 1px solid;
+    flex-basis: 32%;
+    font-size: 6rem;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.info {
+    max-width: 500px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-cell:after {
+    content: "";
+    display: block;
+    padding-bottom: 25%;
+}
+
+.button-container {
+    display: flex;
+    max-width: 500px;
+    margin: auto;
+}
+
+button {
+    flex-basis: 35%;
+    margin: 3rem auto;
+    height: 3rem;
+}
+
+#player_role {
+    margin: 1rem auto;
+}

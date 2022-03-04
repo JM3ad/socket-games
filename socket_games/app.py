@@ -1,8 +1,7 @@
 import asyncio
 from functools import wraps
 import os
-from time import gmtime
-from quart import Quart, g, render_template, websocket, session
+from quart import Quart, redirect, render_template, websocket, session, request
 import json
 import uuid
 
@@ -37,13 +36,20 @@ def create_app():
     async def index():
         return await render_template("index.html")
 
+    @app.route("/join-game", methods=["POST"])
+    @ensure_id
+    async def join_game():
+        form = await request.form
+        game_id = form["game_id"]
+        return redirect(f"/game/{game_id}")
+
     @app.route("/game/<game_id>")
     @ensure_id
     async def game(game_id):
         if game_id not in GAMES:
             GAMES[game_id] = TicTacToeState()
         return await render_template(
-            "game.html",
+            "tic_tac_toe.html",
             game_id=game_id,
             game_state=GAMES[game_id].board,
             player_id=session["id"],
