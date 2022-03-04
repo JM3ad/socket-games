@@ -43,7 +43,7 @@ def create_app():
         if game_id not in GAMES:
             GAMES[game_id] = TicTacToeState()
         return await render_template(
-            "game.html",
+            "tic_tac_toe.html",
             game_id=game_id,
             game_state=GAMES[game_id].board,
             player_id=session["id"],
