@@ -8,11 +8,17 @@
     </div>
 
     <div class="description">
-        Click the button below to start a new game, and share the game code with your friends
+        Click the button below to start a new game, and share the game code with your friends.
     </div>
 
     <div class="game-selection">
         <button id="start">Play Noughts & Crosses</button>
+
+        <form action="/join-game" method="POST">
+            <label for="game_id">Game Id</label>
+            <input type="text" name="game_id" />
+            <input type="submit" value="Join Game" />
+        </form>
     </div>
     <script src="./static/js/main.js"></script>
 </body>

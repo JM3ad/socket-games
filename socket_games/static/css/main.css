@@ -9,6 +9,7 @@
 
 .game-selection {
     display: flex;
+    flex-direction: column;
     max-width: 60%;
     max-width: 300px;
     margin: auto;
@@ -20,4 +21,9 @@
     flex: 1;
     min-height: 3rem; 
     max-width: 200px;
+    margin: 1rem;
+}
+
+.game-selection > form {
+    
 }
