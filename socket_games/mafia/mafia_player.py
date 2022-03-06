@@ -1,4 +1,7 @@
-class MafiaPlayer():
+from socket_games.mafia.mafia_role import MafiaRole
+
+
+class MafiaPlayer:
     def __init__(self, id, role):
         self.id = id
         self.role = role
@@ -10,3 +13,6 @@ class MafiaPlayer():
     def reset(self):
         self.is_alive = True
         self.role = None
+
+    def is_evil(self):
+        return self.role == MafiaRole.MAFIA
