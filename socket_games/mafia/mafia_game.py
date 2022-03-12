@@ -1,5 +1,4 @@
 from asyncio import InvalidStateError
-from msilib.schema import Error
 from random import sample
 from typing import List
 
