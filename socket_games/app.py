@@ -4,6 +4,7 @@ import os
 from quart import Quart, redirect, render_template, websocket, session, request
 import json
 import uuid
+from socket_games.mafia.mafia_blueprint import create_mafia_blueprint
 from socket_games.mafia.mafia_game import MafiaGame
 
 from socket_games.tic_tac_toe.ttt_blueprint import create_tic_tac_toe_blueprint
@@ -15,17 +16,16 @@ def create_app():
 
     # TODO: Improve the way I'm storing the gamestate
     GAMES = {}
-    blueprints = [
-        create_tic_tac_toe_blueprint(GAMES)
-    ]
+    blueprints = [create_tic_tac_toe_blueprint(GAMES), create_mafia_blueprint(GAMES)]
 
     for blueprint in blueprints:
+
         @blueprint.before_request
         def assign_id():
             if "id" not in session:
                 session["id"] = generate_id()
 
-        app.register_blueprint(blueprint, url_prefix = '/')
+        app.register_blueprint(blueprint, url_prefix="/")
 
     def generate_id():
         result = str(uuid.uuid4())
@@ -50,7 +50,7 @@ def create_app():
     async def join_game():
         form = await request.form
         game_id = form["game_id"]
-        
+
         game = GAMES[game_id]
         for blueprint in blueprints:
             if blueprint.is_relevant_game(game):
@@ -70,6 +70,5 @@ def create_app():
             game_state=GAMES[game_id],
             player_id=session["id"],
         )
-
 
     return app

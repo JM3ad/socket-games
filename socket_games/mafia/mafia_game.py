@@ -1,3 +1,5 @@
+from asyncio import InvalidStateError
+from msilib.schema import Error
 from random import sample
 from typing import List
 
@@ -117,13 +119,55 @@ class MafiaGame:
             self._progress_stage()
 
     def get_events_for_player(self, player_id: str):
-        player = [player for player in self.players if player.id == player_id][0]
+        player = self._get_player_by_id(player_id)
         player_role = player.role
         return [event.describe_for_role(player_role) for event in self.events]
+
+    def get_role_for_player(self, player_id: str) -> MafiaRole:
+        return self._get_player_by_id(player_id).role
+
+    def get_all_players_as_seen_by(self, player_id: str):
+        return [
+            self._get_player_as_seen_by(player, player_id) for player in self.players
+        ]
+
+    def _get_player_as_seen_by(
+        self, player: MafiaPlayer, player_id: str
+    ) -> MafiaPlayer:
+        knows_role = player.id == player_id or (
+            self.get_role_for_player(player_id) == MafiaRole.MAFIA
+            and player.role == MafiaRole.MAFIA
+        )
+
+        return {
+            "id": player.id,
+            "is_alive": player.is_alive,
+            "role": player.role if knows_role else None,
+        }
+
+    def get_vote_status_for_player(self, player_id: str):
+        if self.vote_status == None:
+            return None
+        if isinstance(self.vote_status, LynchVoteStatus):
+            return {"type": "lynch", "target": self.vote_status.target}
+        if isinstance(self.vote_status, KillVoteStatus):
+            player = self._get_player_by_id(player_id)
+            if not player.is_evil:
+                return None
+            return {
+                "type": "mafia_vote",
+                "current_votes": self.vote_status.current_votes,
+            }
+
+        raise InvalidStateError()
 
     def complete_day(self):
         if self.stage == MafiaStage.DAY:
             self._progress_stage()
+
+    def _get_player_by_id(self, player_id):
+        player = [player for player in self.players if player.id == player_id][0]
+        return player
 
     def _add_event(self, event):
         self.events.append(event)

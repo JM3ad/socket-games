@@ -20,12 +20,9 @@ async def test_joining_game_redirects_correctly(test_app: Quart):
     test_client = test_app.test_client()
     game_id = "abcdef"
     await test_client.get(f"/tic-tac-toe/{game_id}")
-    form_data = {
-        'game_id': game_id
-    }
+    form_data = {"game_id": game_id}
 
-    response = await test_client.post(f"/join-game", form = form_data)
+    response = await test_client.post(f"/join-game", form=form_data)
 
     assert response.status_code == 302
     assert response.location == f"tic-tac-toe/{game_id}"
-
