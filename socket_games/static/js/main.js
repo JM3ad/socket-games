@@ -5,5 +5,5 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 function startGame() {
     const gameId = Math.random().toString(36).substring(2, 5);;
-    window.location.replace(`/game/${gameId}`)
+    window.location.replace(`/tic-tac-toe/${gameId}`)
 }

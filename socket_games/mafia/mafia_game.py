@@ -1,12 +1,6 @@
-"""
-start in night time
-Mafia told who else is mafia
-then day, chance to lynch
-then night, mafia kill
-repeat until mafia all dead or mafia outnumber villagers
-"""
 from random import sample
 from typing import List
+
 from socket_games.mafia.kill_vote_status import KillVoteStatus
 from socket_games.mafia.lynch_vote_status import LynchVoteStatus, Vote
 from socket_games.mafia.mafia_event import MafiaEvent
@@ -35,8 +29,8 @@ class MafiaGame:
             player.reset()
 
     def start_game(self):
-        ## TODO make this variable?
         self.reset_game()
+        ## TODO make this variable?
         number_of_mafia = 2
         mafia_players = sample(self.players, number_of_mafia)
         for member in mafia_players:
