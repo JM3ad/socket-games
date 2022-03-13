@@ -80,7 +80,7 @@ class MafiaGame:
                 else "not lynched"
             )
             result_description = f"Player {self.vote_status.target} was {lynch_result}"
-            print("registering result")
+
             self._add_event(
                 MafiaEvent(
                     {
@@ -96,12 +96,16 @@ class MafiaGame:
                 ][0]
                 target_player.kill()
                 self.complete_day()
+            else:
+                self.vote_status = None
 
     def get_game_outcome(self):
         pass
 
     def vote_to_kill(self, nominater, nominee):
         if self.vote_status == None or self.stage != MafiaStage.NIGHT:
+            return
+        if not self._get_player_by_id(nominee).is_alive:
             return
         self.vote_status.add_vote(nominater, nominee)
         if self.vote_status.get_result() != None:
