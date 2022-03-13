@@ -4,10 +4,10 @@ import os
 from quart import Quart, redirect, render_template, websocket, session, request
 import json
 import uuid
+from socket_games.mafia.mafia_blueprint import create_mafia_blueprint
+from socket_games.mafia.mafia_game import MafiaGame
 
-from socket_games.socket_helper import broadcast, collect_websocket, send_queue_messages
-from socket_games.tic_tac_toe.ttt_game_state import TicTacToeState
-from socket_games.tic_tac_toe.ttt_encoder import TicTacToeEncoder
+from socket_games.tic_tac_toe.ttt_blueprint import create_tic_tac_toe_blueprint
 
 
 def create_app():
@@ -16,6 +16,16 @@ def create_app():
 
     # TODO: Improve the way I'm storing the gamestate
     GAMES = {}
+    blueprints = [create_tic_tac_toe_blueprint(GAMES), create_mafia_blueprint(GAMES)]
+
+    for blueprint in blueprints:
+
+        @blueprint.before_request
+        def assign_id():
+            if "id" not in session:
+                session["id"] = generate_id()
+
+        app.register_blueprint(blueprint, url_prefix="/")
 
     def generate_id():
         result = str(uuid.uuid4())
@@ -24,7 +34,6 @@ def create_app():
     def ensure_id(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            # if no player id, set one
             if "id" not in session:
                 session["id"] = generate_id()
             return await func(*args, **kwargs)
@@ -41,50 +50,30 @@ def create_app():
     async def join_game():
         form = await request.form
         game_id = form["game_id"]
-        return redirect(f"/game/{game_id}")
 
-    @app.route("/game/<game_id>")
+        game = GAMES[game_id]
+        for blueprint in blueprints:
+            if blueprint.is_relevant_game(game):
+                return redirect(blueprint.get_game_url(game_id))
+
+        # TODO: Flash? the message that this has failed
+        return redirect(f"/index")
+
+    @app.route("/mafia/<game_id>")
     @ensure_id
-    async def game(game_id):
+    async def mafia(game_id):
         if game_id not in GAMES:
-            GAMES[game_id] = TicTacToeState()
+            GAMES[game_id] = MafiaGame()
         return await render_template(
-            "tic_tac_toe.html",
+            "mafia.html",
             game_id=game_id,
-            game_state=GAMES[game_id].board,
+            game_state=GAMES[game_id],
             player_id=session["id"],
         )
 
-    @app.websocket("/ws/<game_id>")
-    @collect_websocket
-    async def ws(queue, game_id):
-        if game_id not in GAMES:
-            # Throw exception?
-            return
-        game = GAMES[game_id]
-        game.add_player(session["id"])
-        asyncio.create_task(send_queue_messages(websocket, queue))
-        while True:
-            data = await websocket.receive()
-            parsed = json.loads(data)
-            message_type = parsed["message_type"]
-            if message_type == "move":
-                move = parsed["move"]
-                game.play_move(move, session["id"])
-            elif message_type == "reset":
-                game.reset()
-            elif message_type == "start":
-                game.assign_players()
-            await broadcast(
-                game_id,
-                json.dumps(
-                    {
-                        "game_board": game.board,
-                        "result": game.get_result(),
-                        "players": game.player_roles,
-                    },
-                    cls=TicTacToeEncoder,
-                ),
-            )
-
     return app
+
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run()

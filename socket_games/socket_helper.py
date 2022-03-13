@@ -1,6 +1,10 @@
 import asyncio
 from functools import wraps
 
+from quart import session
+
+from socket_games.game_message import GameMessage
+
 connected_websockets = {}
 
 
@@ -31,6 +35,11 @@ async def send_queue_messages(websocket, queue):
     while True:
         try:
             packet = await queue.get()
+            print("Sending")
+            if isinstance(packet, GameMessage):
+                print("Message, not data")
+                player_id = session["id"]
+                packet = packet.get_game_info_for_user(player_id)
             await websocket.send(packet)
         except asyncio.QueueEmpty:
             pass

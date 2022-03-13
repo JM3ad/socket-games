@@ -1,19 +1,11 @@
-from functools import wraps
 import pytest
 import json
 import os
-from async_timeout import timeout
+
+from quart import Quart
 
 from socket_games.app import create_app
-
-
-def with_timeout(corofunc):
-    @wraps(corofunc)
-    async def wrapper(*args, **kwargs):
-        with timeout(1):
-            return await corofunc(*args, **kwargs)
-
-    return wrapper
+from socket_games_tests.test_helpers import with_timeout
 
 
 @pytest.fixture
@@ -24,18 +16,13 @@ def test_app():
 
 @pytest.mark.asyncio
 @with_timeout
-async def test_websocket(test_app):
+async def test_joining_game_redirects_correctly(test_app: Quart):
     test_client = test_app.test_client()
     game_id = "abcdef"
-    data = json.dumps(
-        {"message_type": "move", "game_id": game_id, "move": "top-right", "player": "X"}
-    )
-    await test_client.get(f"/game/{game_id}")
+    await test_client.get(f"/tic-tac-toe/{game_id}")
+    form_data = {"game_id": game_id}
 
-    async with test_client.websocket(f"/ws/{game_id}") as test_websocket:
-        await test_websocket.send(data)
-        result = await test_websocket.receive()
+    response = await test_client.post(f"/join-game", form=form_data)
 
-    json_result = json.loads(result)
-    state = json_result["game_board"]
-    assert len(state) == 9
+    assert response.status_code == 302
+    assert response.location == f"tic-tac-toe/{game_id}"
