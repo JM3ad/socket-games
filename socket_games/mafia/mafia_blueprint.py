@@ -2,6 +2,7 @@ import asyncio
 import json
 from quart import render_template, session, websocket
 from socket_games.game_blueprint import GameBlueprint
+from socket_games.mafia.lynch_vote_status import Vote
 from socket_games.mafia.mafia_game import MafiaGame
 from socket_games.mafia.mafia_socket_message import MafiaSocketMessage
 from socket_games.socket_helper import broadcast, collect_websocket, send_queue_messages
@@ -42,18 +43,20 @@ def create_mafia_blueprint(games):
             player_id = session["id"]
             game.add_player(player_id)
             task = asyncio.create_task(send_queue_messages(websocket, queue))
+            await broadcast(game_id, MafiaSocketMessage(game))
             while True:
                 data = await websocket.receive()
                 parsed = json.loads(data)
                 message_type = parsed["message_type"]
 
-                if message_type == "nominate_lynch":
+                if message_type == "start":
+                    game.start_game()
+                elif message_type == "nominate_lynch":
                     nominee = parsed["nominee"]
                     game.nominate_lynching(player_id, nominee)
-                elif message_type == "start":
-                    game.start_game()
                 elif message_type == "vote":
-                    game.vote_for_lynch(player_id, parsed["vote"])
+                    player_vote = Vote.LYNCH if parsed["vote"] else Vote.DONT_LYNCH
+                    game.vote_for_lynch(player_id, player_vote)
                 elif message_type == "mafia_vote":
                     nominee = parsed["kill_target"]
                     game.vote_to_kill(player_id, nominee)

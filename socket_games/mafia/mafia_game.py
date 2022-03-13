@@ -31,6 +31,9 @@ class MafiaGame:
 
     def start_game(self):
         self.reset_game()
+        # TODO add a unit test for this?
+        if len(self.players) < 3:
+            return
         ## TODO make this variable?
         number_of_mafia = 2
         mafia_players = sample(self.players, number_of_mafia)
@@ -66,7 +69,7 @@ class MafiaGame:
         living_player_ids = [player.id for player in self.players if player.is_alive]
         self.vote_status = LynchVoteStatus(living_player_ids, nominee)
 
-    def vote_for_lynch(self, voter: str, vote: str):
+    def vote_for_lynch(self, voter: str, vote: bool):
         if not self.vote_status:
             return
         self.vote_status.add_vote(voter, vote)

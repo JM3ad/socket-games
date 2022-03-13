@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="/static/css/mafia.css"></link>
+    <link rel="stylesheet" href="/static/css/game_shared.css"></link>
 </head>
 <body>
     <div class="info">
@@ -9,6 +10,18 @@
         <div id="player_role"></div>
     </div>
     <button id="start">Start</button>
+    <div id="player-list">
+        <!-- This will hold buttons for voting to kill, or nominating to lynch-->
+    </div>
+    <div>
+        <div id="lynch-nomination"></div>
+        <button id="vote-yes">Yes</button>
+        <button id="vote-no">No</button>
+    </div>
+    <button id="complete-day">Complete Day</button>
+    <ul id="event-log">
+
+    </ul>
 </div>
 <script src="/static/js/mafia.js"></script>
 </body>
