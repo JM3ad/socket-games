@@ -135,6 +135,7 @@ def test_failed_lynch_doesnt_end_day(game_with_5_players: MafiaGame):
 
     assert players[1].is_alive
     assert game.stage == MafiaStage.DAY
+    assert game.vote_status == None
 
 
 def test_cant_nominate_for_lynch_at_night(game_with_5_players: MafiaGame):

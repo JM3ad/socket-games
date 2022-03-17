@@ -1,0 +1,104 @@
+.top-bar {
+    height: 4rem;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#player-id {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.game-border {
+    display: flex;
+    flex-direction: row;
+    max-width: 1100px;
+    margin: auto;
+    min-height: 300px;
+    padding-top: 2rem;
+}
+
+#player-area {
+    min-width: 100px;
+    flex: 1;
+    border: 0.125rem dashed black;
+}
+
+#players-title {
+    text-decoration: underline;
+    text-align: center;
+}
+
+#player-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-entry {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 0;
+}
+
+.player-entry > button {
+    margin: 0.25rem 0.75rem;
+    height: 1.75rem;
+}
+
+#pre-game-info {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#pre-game-info > button {
+    margin: 1rem auto;
+}
+
+#info-title {
+    text-decoration: underline;
+    text-align: center;
+}
+
+#action-area {
+    flex: 1.25;
+    min-width: 100px;
+    display: flex;
+    margin: 0 1.5rem;
+}
+
+#events-area {
+    flex: 1;
+    min-width: 100px;
+}
+
+#event-log {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+#lynch-info {
+    display: flex;
+    flex-direction: column;
+}
+
+#lynch-nomination {
+    text-align: center;
+}
+
+#lynch-buttons {
+    display: flex;
+}
+
+h3 {
+    text-align: center;
+}
